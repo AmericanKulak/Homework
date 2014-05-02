@@ -4,7 +4,19 @@
 
 	var sort = function(array, valFn)
 	{
-		quicksort(array, 0, array.length-1, valFn);
+		if(valFn == null)
+		{
+			valFn = function(a, b) {
+				if(a < b)
+					return -1;
+				else if(a > b)
+					return 1;
+				else
+					return 0;
+			}
+		}
+
+		quicksort(array, 0, array.length - 1, valFn);
 
 		return array;
 	}
@@ -13,14 +25,9 @@
 	{
 		if(left < right)
 		{
-
 			var pivotIndex = choosePivot(array, left, right, valFn);
 
-			console.log("pivotIndex: " + pivotIndex);
-
 			var pivotNewIndex = partition(array, left, right, pivotIndex, valFn);
-
-			console.dir(array);
 
 			quicksort(array, left, pivotNewIndex - 1, valFn);
 			quicksort(array, pivotNewIndex + 1, right, valFn);
@@ -29,7 +36,19 @@
 
 	function choosePivot(array, left, right, valFn)
 	{
-		return Math.floor(left + right / 2);
+		var l = array[left];
+		var r = array[right];
+		var m = array[Math.floor((left + right) / 2)];
+
+		if((valFn(m, l) < 0 && valFn(l, r) < 0) || (valFn(m, l) > 0 && valFn(l, r) > 0))
+			return left;
+
+		if((valFn(m, r) < 0 && valFn(r, l) < 0) || (valFn(m, r) > 0 && valFn(r, l) > 0))
+			return right;
+
+		else
+			return Math.floor((left + right) / 2);
+
 	}
 
 
@@ -42,7 +61,7 @@
 		var storeIndex = left;
 
 		for (var i = left; i < right; i++) {
-			if(array[i] <= pivotValue)
+			if(valFn(array[i], pivotValue) <= 0)
 			{
 				swap(i, storeIndex);
 
@@ -91,6 +110,6 @@
 
 	// console.log(sort(["bob", "charlie", "alf", "echo", "delta"], function(a, b){ return a.length - b.length;}));
 
-	console.log(sort([3,7,8,5,2,1,9,5,4]));
+	// console.log(sort([3,7,8,5,2,1,9,5,4]));
 
 })();
